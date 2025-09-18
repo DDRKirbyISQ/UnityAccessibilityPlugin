@@ -4710,8 +4710,9 @@ public class UAP_AccessibilityManager : MonoBehaviour
 
 	/// <summary>
 	/// Set the voice used by the screen reader. 
-	/// Only works with the Windows SAPI TTS
-	/// Available voices can be found in the registry under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\[voice]\Attributes\Name
+	/// Works with Windows SAPI TTS and Mac OS TTS, but the available voices are different for each.
+	/// For windows, available voices can be found in the registry under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\[voice]\Attributes\Name
+	/// For mac, available voices can be found by running the command "say -v '?'".
 	/// </summary>
 	/// <param name="voice">Name of the voice to be used</param>
 	/// <returns></returns>

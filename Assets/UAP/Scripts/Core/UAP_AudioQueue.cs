@@ -651,8 +651,14 @@ public class UAP_AudioQueue : MonoBehaviour
 		#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 			if (UAP_AccessibilityManager.UseWindowsTTS() && WindowsTTS.instance != null)
 			{
-				//use WindowsTTS to set the rate
+				//use WindowsTTS to set the voice
 				WindowsTTS.SetVoice(m_SpeechVoice);
+			}
+		#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+			if (UAP_AccessibilityManager.UseMacOSTTS() && MacOSTTS.instance != null)
+			{
+				//use MacOSTTS to set the voice
+				MacOSTTS.SetVoice(m_SpeechVoice);
 			}
 		#endif
 

@@ -11,6 +11,7 @@ public class MacOSTTS : MonoBehaviour
 {
 	public static MacOSTTS instance = null;
 	bool m_IsSpeaking = false;
+	private static string m_VoiceName = null;
 
 #if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
 	Process m_VoiceProcess = null;
@@ -57,6 +58,10 @@ public class MacOSTTS : MonoBehaviour
 		textToSpeak = textToSpeak.Replace('"', '\'');
 		int speechRate = (int)((UAP_AccessibilityManager.GetSpeechRate() / 100.0f) * 175 * 2);
 		string parameters = "-r " + speechRate + " " + '"' + textToSpeak + '"';
+		if (m_VoiceName != null)
+		{
+			parameters = "-v " + m_VoiceName + " " + parameters;
+		}
 
 		m_VoiceProcess = new System.Diagnostics.Process();
 		m_VoiceProcess.StartInfo.FileName = "say";
@@ -137,4 +142,15 @@ public class MacOSTTS : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////
 
+	/// <summary>
+	/// Sets the voice used by the say command
+	/// </summary>
+	/// <param name="name">
+	/// Name of the voice to be used.
+	/// List of available voices can be found by using the terminal command "say -v '?'".
+	/// </param>
+	public static void SetVoice(string name)
+	{
+		m_VoiceName = name;
+	}
 }
