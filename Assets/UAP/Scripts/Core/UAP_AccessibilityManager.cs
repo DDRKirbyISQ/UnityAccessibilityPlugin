@@ -1348,7 +1348,8 @@ public class UAP_AccessibilityManager : MonoBehaviour
 				//if (!m_CurrentItem.m_Object.IsInteractable())
 				//  SayAudio(m_DisabledAsAudio, "Disabled", UAP_AudioQueue.EAudioType.Element_Hint);
 				break;
-		};
+		}
+		;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1420,7 +1421,8 @@ public class UAP_AccessibilityManager : MonoBehaviour
 					else
 						SayAudio(null, Localize_Internal("Desktop_HintSlider"), UAP_AudioQueue.EAudioType.Element_Hint, m_CurrentItem.m_Object.m_AllowVoiceOver);
 					break;
-			};
+			}
+			;
 		}
 
 	}
@@ -1730,7 +1732,7 @@ public class UAP_AccessibilityManager : MonoBehaviour
 
 				if (m_ActiveContainers[0] == container && container.m_AutoRead)
 				{
-						ReadFromTop();
+					ReadFromTop();
 				}
 				else
 				{
@@ -1745,7 +1747,7 @@ public class UAP_AccessibilityManager : MonoBehaviour
 
 				if (m_ActiveContainers[m_ActiveContainerIndex] == container && container.m_AutoRead)
 				{
-						ReadFromTop();
+					ReadFromTop();
 				}
 				else
 				{
@@ -4545,7 +4547,7 @@ public class UAP_AccessibilityManager : MonoBehaviour
 
 		if (!instance.m_ActiveContainers.Contains(container))
 		{
-			if(instance.m_DebugOutput && m_IsEnabled)
+			if (instance.m_DebugOutput && m_IsEnabled)
 				Debug.LogWarning("[Accessibility] Trying to select an item in a container that is inactive. Ignoring call.");
 			return false;
 		}
@@ -4707,6 +4709,21 @@ public class UAP_AccessibilityManager : MonoBehaviour
 	//////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
+	/// Set the voice used by the screen reader. 
+	/// Only works with the Windows SAPI TTS
+	/// Available voices can be found in the registry under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\[voice]\Attributes\Name
+	/// </summary>
+	/// <param name="voice">Name of the voice to be used</param>
+	/// <returns></returns>
+	static public string SetVoice(string voice)
+	{
+		Initialize();
+		return instance.m_AudioQueue.SetVoice(voice);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
 	/// This function is called from the Accessible UI component if the <i>Is Localization Key</i> checkbox is ticked.
 	/// 
 	/// If NGUI support is enabled, this function will use NGUI's inhouse localization function to localize the text.
@@ -4771,7 +4788,7 @@ public class UAP_AccessibilityManager : MonoBehaviour
 		//Debug.Log(CultureInfo.CurrentCulture.ToString() + " " + formattedNumber);
 		return formattedNumber;
 	}
-	
+
 	static public string FormatNumberToCurrentLocale(double floatNumber)
 	{
 		string formattedNumber;// = string.Format(CultureInfo.CurrentCulture, "{0:n0}", intNumber);

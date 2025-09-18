@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 public class WindowsTTS : MonoBehaviour
 {
@@ -15,10 +16,12 @@ public class WindowsTTS : MonoBehaviour
 	public static extern void AddToSpeechQueue(string s);
 	//[DllImport("WindowsTTS")]
 	//public static extern void SetVolume(int volume);
-	//[DllImport("WindowsTTS")]
-	//public static extern void SetRate(int rate);
+	[DllImport("WindowsTTS")]
+	public static extern void SetRate(int rate);
 	[DllImport("WindowsTTS")]
 	public static extern bool IsVoiceSpeaking();
+	[DllImport("WindowsTTS")]
+	public static extern void SetVoiceSAPI(string s);
 
 	[DllImport("nvdaControllerClient")]
 	internal static extern int nvdaController_testIfRunning();
@@ -78,7 +81,7 @@ public class WindowsTTS : MonoBehaviour
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	
+
 	public static void Speak(string msg)
 	{
 		if (m_UseNVDA)
@@ -89,6 +92,20 @@ public class WindowsTTS : MonoBehaviour
 		else
 		{
 			AddToSpeechQueue(msg);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
+	/// Sets the voice used by the SAPI API
+	/// </summary>
+	/// <param name="name">Name of the voice to be used. Can be found under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\[voice]\Attributes.</param>
+	public static void SetVoice(string name)
+	{
+		if (!m_UseNVDA)
+		{
+			SetVoiceSAPI("Name=" + name);
 		}
 	}
 
@@ -133,22 +150,30 @@ public class WindowsTTS : MonoBehaviour
 			m_NVDAIsSpeakingTimer -= Time.unscaledDeltaTime;
 	}
 
-/*
-	//////////////////////////////////////////////////////////////////////////
+	/*
+		//////////////////////////////////////////////////////////////////////////
 
-	public static void SetSpeechVolume(int volume)
-	{
-		SetVolume(volume);
-	}
+		public static void SetSpeechVolume(int volume)
+		{
+			SetVolume(volume);
+		}
+
+	*/
 
 	//////////////////////////////////////////////////////////////////////////
 
 	public static void SetSpeechRate(int rate)
 	{
+		//if using SAPI
+		if (!m_UseNVDA)
+		{
+			//normalize the standard 1-100 rate to SAPI -10 to 10 range
+			rate = -10 + (int)((rate - 1) * 0.202);
+		}
 		SetRate(rate);
 	}
-*/
-	
+
+
 	//////////////////////////////////////////////////////////////////////////
 
 	void OnDestroy()
