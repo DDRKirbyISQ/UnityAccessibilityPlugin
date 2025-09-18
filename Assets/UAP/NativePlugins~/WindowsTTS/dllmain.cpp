@@ -106,7 +106,8 @@ namespace WindowsVoice
 			wchar_t* wText = new wchar_t[len];
 
 			memset(wText, 0, len);
-			::MultiByteToWideChar(CP_ACP, NULL, text, -1, wText, len);
+            // Use CP_UTF8 for proper unicode support
+			::MultiByteToWideChar(CP_UTF8, NULL, text, -1, wText, len);
 
 			theMutex.lock();
 			theSpeechQueue.push_back(wText);
