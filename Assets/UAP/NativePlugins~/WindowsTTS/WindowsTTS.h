@@ -5,6 +5,7 @@
 #endif
 
 #include <mutex>
+#include <condition_variable>
 #include <list>
 #include <thread>
 
@@ -22,6 +23,7 @@ namespace WindowsVoice {
   }
 
   std::mutex theMutex;
+  std::condition_variable cv;
   std::list<wchar_t*> theSpeechQueue;
   std::thread* theSpeechThread;
 	bool stopSpeech;

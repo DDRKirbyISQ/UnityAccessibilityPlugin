@@ -21,6 +21,7 @@ namespace WindowsVoice
 
 	void SpeechThreadFunc()
 	{
+		theMutex.lock();
 		//SpeechSynthesizer* synth = new SpeechSynthesizer();
 
 		SPVOICESTATUS* pStatus = new SPVOICESTATUS();
@@ -28,6 +29,7 @@ namespace WindowsVoice
 		if (FAILED(::CoInitializeEx(NULL, COINITBASE_MULTITHREADED)))
 		{
 			//std::cout<<"Failed to initialize COM for Voice.\n";
+			theMutex.unlock();
 			return;
 		}
 
@@ -39,12 +41,14 @@ namespace WindowsVoice
 			LPVOID pText = 0;
 
 			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&pText, 0, NULL);
+				NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&pText, 0, NULL);
 			//std::cout<<"Failed to create voice instance. Error: "<<pText<<std::endl;
 			LocalFree(pText);
+			theMutex.unlock();
 			return;
 		}
-
+		cv.notify_all();
+		theMutex.unlock();
 
 		// Enumerate available voices	
 		//hr = SpEnumTokens(SPCAT_VOICES, NULL, NULL, &m_VoicesEnum);
@@ -123,7 +127,9 @@ namespace WindowsVoice
 		shouldTerminate = false;
 		stopSpeech = false;
 
+		std::unique_lock<std::mutex> lk(theMutex);
 		theSpeechThread = new std::thread(WindowsVoice::SpeechThreadFunc);
+		while (pVoice == NULL) cv.wait(lk);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
